@@ -27,8 +27,11 @@ public:
     void RetrieveAll();
     std::string RetrieveAllToStr();
 
-    void Append(const std::string& str);
+    const char* BeginWriteConst() const;
+    char* BeginWrite();
+
     void Append(const char* str, size_t len);
+    void Append(const std::string& str);
     void Append(const void* data, size_t len);
     void Append(const Buffer& buff);
 
