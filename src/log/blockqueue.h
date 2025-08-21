@@ -58,28 +58,28 @@ void BlockQueue<T>::Close()
 template<typename T>
 void BlockQueue<T>::clear()
 {
-    lock_guard<mutex> lock(mtx_);
+    lock_guard<mutex> locker(mtx_);
     deq_.clear();
 }
 //检查队列是否为空
 template<typename T>
 bool BlockQueue<T>::empty()
 {
-    lock_guard<mutex> lock(mtx_);
+    lock_guard<mutex> locker(mtx_);
     return deq_.empty();
 }
 //检查队列是否为满
 template<typename T>
 bool BlockQueue<T>::full()
 {
-    lock_guard<mutex> lock(mtx_);
+    lock_guard<mutex> locker(mtx_);
     return deq_.size()>=capacity_;
 }
 //向阻塞队列增加元素
 template<typename T>
 void BlockQueue<T>::push_back(const T& item)
 {
-    unique_lock<mutex> lock(mtx_);
+    unique_lock<mutex> locker(mtx_);
     while(full())
     {
         condProducer_.wait(lock);
@@ -90,7 +90,7 @@ void BlockQueue<T>::push_back(const T& item)
 template<typename T>
 void BlockQueue<T>::push_front(const T& item)
 {
-    unique_lock<mutex> lock(mtx_);
+    unique_lock<mutex> locker(mtx_);
     while(full())
     {
         condProducer_.wait(lock);
@@ -102,8 +102,8 @@ void BlockQueue<T>::push_front(const T& item)
 template<typename T>
 bool BlockQueue<T>::pop(T& item)
 {
-    unique_lock<mutex> lock(mtx_)
-    while(empty())
+    unique_lock<mutex> locker(mtx_)
+    while(deq_.empty())
     {
         condConsumer_.wait(lock);
     }
@@ -112,6 +112,51 @@ bool BlockQueue<T>::pop(T& item)
     condProducer_.notify_one();
     return true;
 }
+template<typename T>
+bool BlockQueue<T>::pop(T& item,int timeout)
+{
+    unique_lock<mutex> locker(mtx_);
+    while(deq_.empty())
+    {
+        if(condConsumer_.wait_for(std::chrono::seconds(timeout))==std::cv_status::timeout)
+            return false;
+        if(isClose_)
+            return false;
+    }
+    item=deq_.front();
+    deq_.pop_front();
+    condProducer_.notify_one();
+    return true;
+}
 
-
+template<typename T>
+T BlockQueue<T>::front()
+{
+    lock_guard<mutex> locker(mtx_);
+    return deq_.front();
+}
+template<typename T>
+T BlockQueue<T>::back()
+{
+    lock_guard<mutex> locker(mtx_);
+    return deq_.back();
+}
+template<typename T>
+size_t BlockQueue<T>::capacity()
+{
+    lock_guard<mutex> locker(mtx_);
+    return capacity_;
+}
+template<typename T>
+size_t BlockQueue<T>::size()
+{
+    lock_guard<mutex> locker(mtx_);
+    return deq_.size();
+}
+//唤醒消费者
+template<typename T>
+void BlockQueue<T>::flush() 
+{
+    condConsumer_.notify_one();
+}
 #endif
