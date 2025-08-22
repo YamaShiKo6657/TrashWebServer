@@ -104,3 +104,97 @@ void Log::init(int level, const char* path, const char* suffix, int maxQueCapaci
         assert(fp_!=nullptr);
     }
 }
+//实现写日志函数
+void Log::write(int level,const char* format,...)
+{
+    //获取当前系统时间
+    struct timeval now={0,0};
+    gettimeofday(&now,nullptr);
+    time_t tSec=now.tv_sec;
+    struct tm *systime=localtime(&tSec);
+    struct tm t=*systime;
+
+    va_list valist;
+    if(toDay_=t.tm_mday||(lineCount_&&(lineCount_%MAX_LINES==0)))
+    {
+        char newfile[LOG_NAME_LEN];
+        char tail[36]={0};
+        snprintf(tail,36,"%04d_%02d_%02d",t.tm_year+1900,t.tm_mon+1,t.tm_mday);
+        if(toDay_!=t.tm_mday)
+        {
+            snprintf(newfile,LOG_NAME_LEN-72,"%s/%s%s",path_,tail,suffix_);
+            toDay_=t.tm_mday;
+            lineCount_=0;
+        }
+        else
+        {
+            snprintf(newfile,LOG_NAME_LEN,"%s/%s-%d%s",path_,tail,lineCount_%MAX_LINES,suffix_);
+        }
+        {
+        unique_lock<mutex> locker(mtx_);
+        flush();
+        fclose(fp_);
+        fp_ = fopen(newfile, "a");
+        assert(fp_ != nullptr);
+        }
+    }
+    {
+        unique_lock<mutex> locker(mtx_);
+        lineCount_++;
+        int n=snprintf(buff_.BeginWrite(),128,"%d-%02d-%02d %02d:%02d:%02d.%06ld",t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+                    t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);
+        buff_.HasWritten(n);
+        AppendLogLevelTitle_(level);
+
+        va_start(valist,format);
+        int m=vsnprintf(buff_.BeginWrite(),buff_.WritableBytes(),format,valist);
+        va_end(valist);
+        buff_.HasWritten(m);
+        buff_.Append("\n\0",2);
+
+        if(isAsync_&&deque_&&!deque_->full())//异步模式
+        {
+            deque_->push_back(buff_.RetrieveAllToStr());
+        }
+        else
+        {
+            fputs(buff_.Peek(),fp_);//同步模式
+        }
+        buff_.RetrieveAll();
+    }
+
+}
+// 添加日志等级
+void Log::AppendLogLevelTitle_(int level)
+{
+    switch(level)
+    {
+        case 0:
+        buff_.Append("[debug]: ", 9);
+        break;
+        case 1:
+        buff_.Append("[info] : ", 9);
+        break;
+        case 2:
+        buff_.Append("[warn] : ", 9);
+        break;
+        case 3:
+        buff_.Append("[error]: ", 9);
+        break;
+        default:
+        buff_.Append("[info] : ", 9);
+        break;
+    }
+}
+//获取等级
+int Log::GetLevel()
+{
+    lock_guard<mutex> locker(mtx_);
+    return level_;
+}
+//设置等级
+void Log::SetLevel(int level)
+{
+    lock_guard<mutex> locker(mtx_);
+    level_=level;
+}
