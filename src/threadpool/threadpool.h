@@ -27,7 +27,7 @@ private:
     };
     std::shared_ptr<pool> pool_;
 };
-explicit ThreadPool::ThreadPool(int threadcount):pool_(std::make_shared<pool>())
+ThreadPool::ThreadPool(int threadcount):pool_(std::make_shared<pool>())
 {
     assert(threadcount>0);
     for(int i=0;i<threadcount;i++)

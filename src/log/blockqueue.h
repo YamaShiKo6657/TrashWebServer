@@ -37,7 +37,7 @@ private:
 };
 template <typename T>
 //成员初始化列表
-BlockQueue<T>:: BlockQueue(size_t maxsize):capacity(maxsize),isClose_(false)
+BlockQueue<T>:: BlockQueue(size_t maxsize):capacity_(maxsize),isClose_(false)
 {
     assert(maxsize>0);
 }
@@ -82,7 +82,7 @@ void BlockQueue<T>::push_back(const T& item)
     unique_lock<mutex> locker(mtx_);
     while(full())
     {
-        condProducer_.wait(lock);
+        condProducer_.wait(locker);
     }
     deq_.push_back(item);
     condConsumer_.notify_one();
@@ -93,19 +93,19 @@ void BlockQueue<T>::push_front(const T& item)
     unique_lock<mutex> locker(mtx_);
     while(full())
     {
-        condProducer_.wait(lock);
+        condProducer_.wait(locker);
     }
     deq_.push_front(item);
     condConsumer_.notify_one();
 }
 //从队列中取出数据
-template<typename T>
+template<typename T>                                    
 bool BlockQueue<T>::pop(T& item)
 {
-    unique_lock<mutex> locker(mtx_)
+    unique_lock<mutex> locker(mtx_);
     while(deq_.empty())
     {
-        condConsumer_.wait(lock);
+        condConsumer_.wait(locker);
     }
     item=deq_.front();
     deq_.pop_front();
@@ -118,7 +118,7 @@ bool BlockQueue<T>::pop(T& item,int timeout)
     unique_lock<mutex> locker(mtx_);
     while(deq_.empty())
     {
-        if(condConsumer_.wait_for(std::chrono::seconds(timeout))==std::cv_status::timeout)
+        if(condConsumer_.wait_for(locker,std::chrono::seconds(timeout))==std::cv_status::timeout)
             return false;
         if(isClose_)
             return false;
