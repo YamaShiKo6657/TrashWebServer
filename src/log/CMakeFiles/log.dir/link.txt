@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -shared -Wl,-soname,liblog.so -o ../../bin/liblog.so CMakeFiles/log.dir/log.cpp.o  -Wl,-rpath,/home/linus/Mycode/TrashWebServer/bin ../../bin/libbuffer.so 

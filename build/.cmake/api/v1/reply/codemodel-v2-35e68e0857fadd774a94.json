@@ -1,0 +1,190 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "src",
+					"childIndexes" : 
+					[
+						2,
+						3,
+						4
+					],
+					"jsonFile" : "directory-src-Debug-b6cf2213fc5053b67c22.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "src",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "src/log",
+					"jsonFile" : "directory-src.log-Debug-f2809aff8ae335556425.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "src/log",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "src/threadpool",
+					"jsonFile" : "directory-src.threadpool-Debug-ea3015766f06d3eb4fc8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "src/threadpool",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "src/buffer",
+					"jsonFile" : "directory-src.buffer-Debug-f680e616f58bec73cac2.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 3,
+					"source" : "src/buffer",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "TrashwebServer"
+				},
+				{
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"directoryIndexes" : 
+					[
+						1,
+						3
+					],
+					"name" : "test_main",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "log",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "buffer",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 4,
+					"id" : "buffer::@1617a6d482f49dd99a3b",
+					"jsonFile" : "target-buffer-Debug-084615690666632d1633.json",
+					"name" : "buffer",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "log::@c50f4de1a1e2d0ee20d5",
+					"jsonFile" : "target-log-Debug-29bf1cdea7225617d16a.json",
+					"name" : "log",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "sqlconnpool::@b4cc31f19da39e2e08cb",
+					"jsonFile" : "target-sqlconnpool-Debug-fcf525754822bd81545c.json",
+					"name" : "sqlconnpool",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "test_main::@145eef247bfb46b6828c",
+					"jsonFile" : "target-test_main-Debug-c8364842726b2c402954.json",
+					"name" : "test_main",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/linus/Mycode/TrashWebServer/build",
+		"source" : "/home/linus/Mycode/TrashWebServer"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

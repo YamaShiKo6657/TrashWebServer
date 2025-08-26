@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/test_main.dir/main.cpp.o -o /home/linus/Mycode/TrashWebServer/bin/test_main  -Wl,-rpath,/home/linus/Mycode/TrashWebServer/bin /home/linus/Mycode/TrashWebServer/bin/liblog.so /home/linus/Mycode/TrashWebServer/bin/libbuffer.so 

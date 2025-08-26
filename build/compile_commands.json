@@ -1,0 +1,26 @@
+[
+{
+  "directory": "/home/linus/Mycode/TrashWebServer/build/src",
+  "command": "/usr/bin/g++  -I/home/linus/Mycode/TrashWebServer/src/log -I/home/linus/Mycode/TrashWebServer/src/threadpool -I/home/linus/Mycode/TrashWebServer/src/buffer -g -std=gnu++11 -o CMakeFiles/test_main.dir/main.cpp.o -c /home/linus/Mycode/TrashWebServer/src/main.cpp",
+  "file": "/home/linus/Mycode/TrashWebServer/src/main.cpp",
+  "output": "src/CMakeFiles/test_main.dir/main.cpp.o"
+},
+{
+  "directory": "/home/linus/Mycode/TrashWebServer/build/src/log",
+  "command": "/usr/bin/g++ -Dlog_EXPORTS -I/home/linus/Mycode/TrashWebServer/src/log -I/home/linus/Mycode/TrashWebServer/src/buffer -g -std=gnu++11 -fPIC -o CMakeFiles/log.dir/log.cpp.o -c /home/linus/Mycode/TrashWebServer/src/log/log.cpp",
+  "file": "/home/linus/Mycode/TrashWebServer/src/log/log.cpp",
+  "output": "src/log/CMakeFiles/log.dir/log.cpp.o"
+},
+{
+  "directory": "/home/linus/Mycode/TrashWebServer/build/src/threadpool",
+  "command": "/usr/bin/g++ -Dsqlconnpool_EXPORTS -I/home/linus/Mycode/TrashWebServer/src/log -I/home/linus/Mycode/TrashWebServer/src/buffer -g -std=gnu++11 -fPIC -o CMakeFiles/sqlconnpool.dir/sqlconnpool.cpp.o -c /home/linus/Mycode/TrashWebServer/src/threadpool/sqlconnpool.cpp",
+  "file": "/home/linus/Mycode/TrashWebServer/src/threadpool/sqlconnpool.cpp",
+  "output": "src/threadpool/CMakeFiles/sqlconnpool.dir/sqlconnpool.cpp.o"
+},
+{
+  "directory": "/home/linus/Mycode/TrashWebServer/build/src/buffer",
+  "command": "/usr/bin/g++ -Dbuffer_EXPORTS  -g -std=gnu++11 -fPIC -o CMakeFiles/buffer.dir/buffer.cpp.o -c /home/linus/Mycode/TrashWebServer/src/buffer/buffer.cpp",
+  "file": "/home/linus/Mycode/TrashWebServer/src/buffer/buffer.cpp",
+  "output": "src/buffer/CMakeFiles/buffer.dir/buffer.cpp.o"
+}
+]

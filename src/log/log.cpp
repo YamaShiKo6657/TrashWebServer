@@ -55,53 +55,52 @@ void Log::AsyncWrite_()
     }
 }
 //初始化实例
-void Log::init(int level, const char* path, const char* suffix, int maxQueCapacity)
-{
-    isOpen_=true;
-    level_=level;
-    path_=path;
-    suffix_=suffix;
-    //异步模式初始化
-    if(maxQueCapacity)
-    {
-        isAsync_=true;
-        if(!deque_)
-        {
-            unique_ptr<BlockQueue<string>> newQue(new BlockQueue<string>);
-            deque_=move(newQue);
+void Log::init(int level, const char* path, const char* suffix, int maxQueCapacity) {
+    isOpen_ = true;
+    level_ = level;
+    path_ = path;
+    suffix_ = suffix;
+    if(maxQueCapacity) {    // 异步方式
+        isAsync_ = true;
+        if(!deque_) {   // 为空则创建一个
+            unique_ptr<BlockQueue<std::string>> newQue(new BlockQueue<std::string>);
+            // 因为unique_ptr不支持普通的拷贝或赋值操作,所以采用move
+            // 将动态申请的内存权给deque，newDeque被释放
+            deque_ = move(newQue);  // 左值变右值,掏空newDeque
+
             unique_ptr<thread> newThread(new thread(FlushLogThread));
-            writeThread_=move(newThread);
+            writeThread_ = move(newThread);
         }
+    } else {
+        isAsync_ = false;
     }
-    else
-    {
-        isAsync_=false;
-    }
-    //日志文件初始化
-    lineCount_=0;
-    time_t timer=time(nullptr);
-    struct tm* systime=localtime(&timer);
-    char filename[LOG_NAME_LEN]={0};
-    snprintf(filename,LOG_NAME_LEN-1,"%s/%04d_%02d_%02d%s",
-    path_,systime->tm_year+1900,systime->tm_mon+1,systime->tm_mday,suffix_);
-    //当前日期
-    toDay_=systime->tm_mday;
-    //独立作用域
+
+    lineCount_ = 0;
+    time_t timer = time(nullptr);
+    struct tm* systime = localtime(&timer);
+    char fileName[LOG_NAME_LEN] = {0};
+    snprintf(fileName, LOG_NAME_LEN - 1, "%s/%04d_%02d_%02d%s", 
+            path_, systime->tm_year + 1900, systime->tm_mon + 1, systime->tm_mday, suffix_);
+    toDay_ = systime->tm_mday;
+
     {
         lock_guard<mutex> locker(mtx_);
         buff_.RetrieveAll();
-        if(fp_)
-        {
+        if(fp_) {   // 重新打开
             flush();
             fclose(fp_);
         }
-        fp_=fopen(filename,"a");
-        if(fp_==nullptr)
-        {
-            mkdir(filename,0777);
-            fp_=fopen(filename,"a");
+        fp_ = fopen(fileName, "a"); // 打开文件读取并附加写入
+        if(fp_ == nullptr) {
+            mkdir(fileName, 0777);
+            fp_ = fopen(fileName, "a"); // 生成目录文件（最大权限）
         }
-        assert(fp_!=nullptr);
+        if(fp_ == nullptr) 
+        {
+            fprintf(stderr, "Failed to open file %s: %s\n", fileName, strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+        assert(fp_ != nullptr);
     }
 }
 //实现写日志函数

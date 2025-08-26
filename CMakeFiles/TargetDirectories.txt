@@ -1,0 +1,14 @@
+/home/linus/Mycode/TrashWebServer/CMakeFiles/edit_cache.dir
+/home/linus/Mycode/TrashWebServer/CMakeFiles/rebuild_cache.dir
+/home/linus/Mycode/TrashWebServer/src/CMakeFiles/test_main.dir
+/home/linus/Mycode/TrashWebServer/src/CMakeFiles/edit_cache.dir
+/home/linus/Mycode/TrashWebServer/src/CMakeFiles/rebuild_cache.dir
+/home/linus/Mycode/TrashWebServer/src/log/CMakeFiles/log.dir
+/home/linus/Mycode/TrashWebServer/src/log/CMakeFiles/edit_cache.dir
+/home/linus/Mycode/TrashWebServer/src/log/CMakeFiles/rebuild_cache.dir
+/home/linus/Mycode/TrashWebServer/src/threadpool/CMakeFiles/sqlconnpool.dir
+/home/linus/Mycode/TrashWebServer/src/threadpool/CMakeFiles/edit_cache.dir
+/home/linus/Mycode/TrashWebServer/src/threadpool/CMakeFiles/rebuild_cache.dir
+/home/linus/Mycode/TrashWebServer/src/buffer/CMakeFiles/buffer.dir
+/home/linus/Mycode/TrashWebServer/src/buffer/CMakeFiles/edit_cache.dir
+/home/linus/Mycode/TrashWebServer/src/buffer/CMakeFiles/rebuild_cache.dir

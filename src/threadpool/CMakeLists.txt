@@ -1,0 +1,23 @@
+add_library(
+    sqlconnpool
+    SHARED
+    sqlconnpool.cpp
+)
+add_library(
+    threadpool
+    INTERFACE
+)
+target_include_directories(
+    threadpool
+    INTERFACE
+    ${Log_Dir}   
+)
+
+target_include_directories(
+    sqlconnpool
+    PUBLIC
+    ${Log_Dir})
+target_link_libraries(
+    sqlconnpool
+    PUBLIC
+    log)

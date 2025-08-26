@@ -1,0 +1,26 @@
+project(log)
+add_library(
+    ${PROJECT_NAME}
+    SHARED
+    log.cpp
+)
+add_library(
+    blockqueue
+    INTERFACE
+)
+target_include_directories(blockqueue
+    INTERFACE
+    ${Log_Dir})
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${Log_Dir})
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${Buffer_Dir})
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    blockqueue)
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    buffer)

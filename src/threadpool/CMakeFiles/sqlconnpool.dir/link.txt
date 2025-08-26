@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -shared -Wl,-soname,libsqlconnpool.so -o ../../bin/libsqlconnpool.so CMakeFiles/sqlconnpool.dir/sqlconnpool.cpp.o  -Wl,-rpath,/home/linus/Mycode/TrashWebServer/bin ../../bin/liblog.so ../../bin/libbuffer.so 

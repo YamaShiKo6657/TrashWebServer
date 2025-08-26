@@ -1,0 +1,1 @@
+/usr/bin/g++ -fPIC -g -shared -Wl,-soname,libbuffer.so -o /home/linus/Mycode/TrashWebServer/bin/libbuffer.so CMakeFiles/buffer.dir/buffer.cpp.o 
