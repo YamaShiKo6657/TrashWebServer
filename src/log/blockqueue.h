@@ -35,11 +35,12 @@ private:
     condition_variable condConsumer_;   // 消费者条件变量
     condition_variable condProducer_;   // 生产者条件变量
 };
-template <typename T>
 //成员初始化列表
-BlockQueue<T>:: BlockQueue(size_t maxsize):capacity_(maxsize),isClose_(false)
+template <typename T>
+BlockQueue<T>:: BlockQueue(size_t maxsize):capacity_(maxsize)
 {
     assert(maxsize>0);
+    isClose_=false;
 }
 template<typename T>
 BlockQueue<T>::~BlockQueue()
@@ -80,7 +81,7 @@ template<typename T>
 void BlockQueue<T>::push_back(const T& item)
 {
     unique_lock<mutex> locker(mtx_);
-    while(full())
+    while(deq_.size() >= capacity_)
     {
         condProducer_.wait(locker);
     }
@@ -91,7 +92,7 @@ template<typename T>
 void BlockQueue<T>::push_front(const T& item)
 {
     unique_lock<mutex> locker(mtx_);
-    while(full())
+    while(deq_.size() >= capacity_)
     {
         condProducer_.wait(locker);
     }

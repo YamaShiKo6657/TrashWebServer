@@ -46,6 +46,7 @@ void TestThreadPool() {
 }
 
 int main() {
-    TestLog();
-    // TestThreadPool();
+    //TestLog();
+    TestThreadPool();
+    std::cout<<"end main"<<std::endl;
 }

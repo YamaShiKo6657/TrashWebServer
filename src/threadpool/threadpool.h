@@ -29,6 +29,7 @@ private:
 };
 ThreadPool::ThreadPool(int threadcount):pool_(std::make_shared<pool>())
 {
+    std::cout<<"start_threadpool"<<std::endl;
     assert(threadcount>0);
     for(int i=0;i<threadcount;i++)
     {

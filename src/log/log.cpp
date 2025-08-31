@@ -60,7 +60,8 @@ void Log::init(int level, const char* path, const char* suffix, int maxQueCapaci
     level_ = level;
     path_ = path;
     suffix_ = suffix;
-    if(maxQueCapacity) {    // 异步方式
+    if(maxQueCapacity) 
+    {    // 异步方式
         isAsync_ = true;
         if(!deque_) {   // 为空则创建一个
             unique_ptr<BlockQueue<std::string>> newQue(new BlockQueue<std::string>);
@@ -71,7 +72,9 @@ void Log::init(int level, const char* path, const char* suffix, int maxQueCapaci
             unique_ptr<thread> newThread(new thread(FlushLogThread));
             writeThread_ = move(newThread);
         }
-    } else {
+    } 
+    else 
+    {
         isAsync_ = false;
     }
 
@@ -92,7 +95,10 @@ void Log::init(int level, const char* path, const char* suffix, int maxQueCapaci
         }
         fp_ = fopen(fileName, "a"); // 打开文件读取并附加写入
         if(fp_ == nullptr) {
-            mkdir(fileName, 0777);
+            char dirpath[100]={0};
+            snprintf(dirpath,99,"%s",path_);
+            mkdir(dirpath,0777);
+            //mkdir(fileName, 0777);
             fp_ = fopen(fileName, "a"); // 生成目录文件（最大权限）
         }
         if(fp_ == nullptr) 
@@ -104,64 +110,66 @@ void Log::init(int level, const char* path, const char* suffix, int maxQueCapaci
     }
 }
 //实现写日志函数
-void Log::write(int level,const char* format,...)
-{
-    //获取当前系统时间
-    struct timeval now={0,0};
-    gettimeofday(&now,nullptr);
-    time_t tSec=now.tv_sec;
-    struct tm *systime=localtime(&tSec);
-    struct tm t=*systime;
+void Log::write(int level, const char *format, ...) {
+    struct timeval now = {0, 0};
+    gettimeofday(&now, nullptr);
+    time_t tSec = now.tv_sec;
+    struct tm *sysTime = localtime(&tSec);
+    struct tm t = *sysTime;
+    va_list vaList;
 
-    va_list valist;
-    if(toDay_=t.tm_mday||(lineCount_&&(lineCount_%MAX_LINES==0)))
+    // 日志日期 日志行数  如果不是今天或行数超了
+    if (toDay_ != t.tm_mday || (lineCount_ && (lineCount_  %  MAX_LINES == 0)))
     {
-        char newfile[LOG_NAME_LEN];
-        char tail[36]={0};
-        snprintf(tail,36,"%04d_%02d_%02d",t.tm_year+1900,t.tm_mon+1,t.tm_mday);
-        if(toDay_!=t.tm_mday)
-        {
-            snprintf(newfile,LOG_NAME_LEN-72,"%s/%s%s",path_,tail,suffix_);
-            toDay_=t.tm_mday;
-            lineCount_=0;
-        }
-        else
-        {
-            snprintf(newfile,LOG_NAME_LEN,"%s/%s-%d%s",path_,tail,lineCount_%MAX_LINES,suffix_);
-        }
-        {
         unique_lock<mutex> locker(mtx_);
+        locker.unlock();
+        
+        char newFile[LOG_NAME_LEN];
+        char tail[36] = {0};
+        snprintf(tail, 36, "%04d_%02d_%02d", t.tm_year + 1900, t.tm_mon + 1, t.tm_mday);
+
+        if (toDay_ != t.tm_mday)    // 时间不匹配，则替换为最新的日志文件名
+        {
+            snprintf(newFile, LOG_NAME_LEN - 72, "%s/%s%s", path_, tail, suffix_);
+            toDay_ = t.tm_mday;
+            lineCount_ = 0;
+        }
+        else {
+            snprintf(newFile, LOG_NAME_LEN - 72, "%s/%s-%d%s", path_, tail, (lineCount_  / MAX_LINES), suffix_);
+        }
+        
+        locker.lock();
         flush();
         fclose(fp_);
-        fp_ = fopen(newfile, "a");
+        fp_ = fopen(newFile, "a");
         assert(fp_ != nullptr);
-        }
     }
+
+    // 在buffer内生成一条对应的日志信息
     {
         unique_lock<mutex> locker(mtx_);
         lineCount_++;
-        int n=snprintf(buff_.BeginWrite(),128,"%d-%02d-%02d %02d:%02d:%02d.%06ld",t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
+        int n = snprintf(buff_.BeginWrite(), 128, "%d-%02d-%02d %02d:%02d:%02d.%06ld ",
+                    t.tm_year + 1900, t.tm_mon + 1, t.tm_mday,
                     t.tm_hour, t.tm_min, t.tm_sec, now.tv_usec);
+                    
         buff_.HasWritten(n);
-        AppendLogLevelTitle_(level);
+        AppendLogLevelTitle_(level);    
 
-        va_start(valist,format);
-        int m=vsnprintf(buff_.BeginWrite(),buff_.WritableBytes(),format,valist);
-        va_end(valist);
+        va_start(vaList, format);
+        int m = vsnprintf(buff_.BeginWrite(), buff_.WritableBytes(), format, vaList);
+        va_end(vaList);
+
         buff_.HasWritten(m);
-        buff_.Append("\n\0",2);
+        buff_.Append("\n\0", 2);
 
-        if(isAsync_&&deque_&&!deque_->full())//异步模式
-        {
+        if(isAsync_ && deque_ && !deque_->full()) { // 异步方式（加入阻塞队列中，等待写线程读取日志信息）
             deque_->push_back(buff_.RetrieveAllToStr());
+        } else {    // 同步方式（直接向文件中写入日志信息）
+            fputs(buff_.Peek(), fp_);   // 同步就直接写入文件
         }
-        else
-        {
-            fputs(buff_.Peek(),fp_);//同步模式
-        }
-        buff_.RetrieveAll();
+        buff_.RetrieveAll();    // 清空buff
     }
-
 }
 // 添加日志等级
 void Log::AppendLogLevelTitle_(int level)

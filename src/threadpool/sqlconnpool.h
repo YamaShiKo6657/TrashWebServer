@@ -1,7 +1,7 @@
 #ifndef SQLCONNPOOL_H
 #define SQLCONNPOOL_H
 
-#include </usr/include/mysql/mysql.h>
+#include <mysql/mysql.h>
 #include <string>
 #include <queue>
 #include <mutex>
@@ -23,7 +23,7 @@ public:
     void ClosePool();
 
 private:
-    SqlConnPool() = default;
+    SqlConnPool() = default;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
     ~SqlConnPool() { ClosePool(); }
 
     int MAX_CONN_;
