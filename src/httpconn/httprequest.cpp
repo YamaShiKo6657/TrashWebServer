@@ -126,7 +126,8 @@ void HttpRequest::ParseBody_(const string& line)
 int HttpRequest::ConverHex(char ch) {
     if(ch >= 'A' && ch <= 'F') return ch -'A' + 10;
     if(ch >= 'a' && ch <= 'f') return ch -'a' + 10;
-    return ch;
+    if(ch>='0'&&ch<='9') return ch-'0';
+    throw std::invalid_argument("Invalid hex character");
 }
 //处理post请求
 void HttpRequest::ParsePost_()
@@ -198,7 +199,7 @@ void HttpRequest::ParseFromUrlencoded_()
         post_[key]=value;
     }
 }
-//登录
+//身份验证
 bool HttpRequest::UserVerify(const string& name,const string& pwd,bool isLogin)
 {
     if(name==""||pwd=="")
